@@ -88,30 +88,31 @@ export const TrackingProvider = ({ children }) => {
   // Get all shipments
   const getAllShipments = async () => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider("YOUR_RPC_URL"); // Add network URL (Ropsten/Mainnet)
-      const contract = fetchContract(provider);
+        const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/");
+        const contract = fetchContract(provider);
 
-      const shipments = await contract.getAllTransactions();
-      return shipments.map((shipment) => ({
-        sender: shipment.sender,
-        receiver: shipment.receiver,
-        price: ethers.utils.formatEther(shipment.price.toString()),
-        pickupTime: shipment.pickupTime.toNumber(),
-        distance: shipment.distance.toNumber(),
-        isPaid: shipment.isPaid,
-        status: shipment.status,
-      }));
+        const shipments = await contract.getAllTransactions();
+        console.log("Fetched shipments:", shipments); // Log fetched shipments
+        return shipments.map((shipment) => ({
+            sender: shipment.sender,
+            receiver: shipment.receiver,
+            price: ethers.utils.formatEther(shipment.price.toString()),
+            pickupTime: shipment.pickupTime.toNumber(),
+            distance: shipment.distance.toNumber(),
+            isPaid: shipment.isPaid,
+            status: shipment.status,
+        }));
     } catch (error) {
-      console.error("Error fetching all shipments:", error.message || error);
+        console.error("Error fetching all shipments:", error.message || error);
     }
-  };
+};
 
   // Get shipment count
   const getShipmentsCount = async () => {
     try {
       if (!window.ethereum) throw new Error("Please install MetaMask.");
       const accounts = await window.ethereum.request({ method: "eth_accounts" });
-      const provider = new ethers.providers.JsonRpcProvider("YOUR_RPC_URL"); // Add network URL (Ropsten/Mainnet)
+      const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/"); // Add network URL (Ropsten/Mainnet)
       const contract = fetchContract(provider);
 
       const shipmentsCount = await contract.getShipmentsCount(accounts[0]);
@@ -176,7 +177,7 @@ export const TrackingProvider = ({ children }) => {
     try {
       validateInputs({ index });
 
-      const provider = new ethers.providers.JsonRpcProvider("YOUR_RPC_URL"); // Add network URL (Ropsten/Mainnet)
+      const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/"); // Add network URL (Ropsten/Mainnet)
       const contract = fetchContract(provider);
 
       const shipment = await contract.getShipment(currentUser, index);

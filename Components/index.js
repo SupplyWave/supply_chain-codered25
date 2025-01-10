@@ -8,7 +8,6 @@ import Nav3 from "./SVG/Nav3";
 import Profile from "./Profile";
 import NavBar from "./NavBar";
 import StartShipment from "./StartShipment";
-import Table from "./Table";
 import Services from "./Services";
 
-export { CompleteShipment, Form, Footer, GetShipment, Nav1, Nav2, Nav3, Profile, NavBar, StartShipment, Table, Services };
+export { CompleteShipment, Form, Footer, GetShipment, Nav1, Nav2, Nav3, Profile, NavBar, StartShipment,  Services };

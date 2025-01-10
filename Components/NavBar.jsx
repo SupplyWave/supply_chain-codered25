@@ -4,10 +4,10 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { TrackingContext } from "@/Context/Tracking";
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
+  { name: 'Home', href: '/home' },
+  { name: 'Dashboard', href: '', current: false }, // href will be updated dynamically
+  { name: 'Tracking', href: '/table_dispaly', current: false },
+  { name: 'Contact', href: '#', current: false },
 ];
 
 function classNames(...classes) {
@@ -15,14 +15,22 @@ function classNames(...classes) {
 }
 
 const NavBar = () => {
-  const { currentUser, connectWallet } = useContext(TrackingContext);
+  const { currentUser, connectWallet, userRole } = useContext(TrackingContext);
+
+  // Determine the dashboard link based on the role
+  const getDashboardLink = () => {
+    if (userRole === "supplier") return "/dashboard/supplier";
+    if (userRole === "manufacturer") return "/dashboard/manufacturer";
+    if (userRole === "customer") return "/dashboard/customer";
+    if (userRole === "other") return "/dashboard/other";
+    return "/dashboard"; // Default fallback
+  };
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            {/* Mobile menu button*/}
             <Disclosure.Button className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
               <span className="absolute -inset-0.5" />
               <span className="sr-only">Open main menu</span>
@@ -45,7 +53,7 @@ const NavBar = () => {
                 {navigation.map((item) => (
                   <a
                     key={item.name}
-                    href={item.href}
+                    href={item.name === "Dashboard" ? getDashboardLink() : item.href}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
                       item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
@@ -60,7 +68,6 @@ const NavBar = () => {
           </div>
 
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {/* Conditional rendering for Connect Wallet / Current User Address */}
             {currentUser ? (
               <p className="flex items-center justify-center gap-x-1 py-2 px-4 text-white font-medium bg-gray-800 hover:bg-gray-700 active:bg-gray-900 rounded-full md:inline-flex">
                 {currentUser.slice(0, 25)}...
@@ -83,7 +90,7 @@ const NavBar = () => {
             <Disclosure.Button
               key={item.name}
               as="a"
-              href={item.href}
+              href={item.name === "Dashboard" ? getDashboardLink() : item.href}
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
                 item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
