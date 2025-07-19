@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
+import dbConnect from "../../lib/dbConnect";
 import Product from "../../models/productSchema";
 
 export default async function handler(req, res) {
+  await dbConnect();
   if (req.method === "POST") {
     const {
       name,
@@ -23,13 +24,25 @@ export default async function handler(req, res) {
         const newProduct = new Product({
           name,
           description,
-          price,
+          price: Number(price),
           location,
           addedBy, // Manufacturer's MetaMask address
+          category: 'Other', // Default category
+          isAvailable: true,
+          stock: 1,
+          averageRating: 0,
+          totalReviews: 0,
+          viewCount: 0,
+          purchaseCount: 0,
+          approvedPayments: []
         });
 
         await newProduct.save();
-        return res.status(201).json({ success: true, message: "Product added successfully." });
+        return res.status(201).json({
+          success: true,
+          message: "Product added successfully.",
+          data: newProduct
+        });
       }
 
       // Handle payment update

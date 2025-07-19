@@ -13,42 +13,297 @@ const fetchContract = (signerOrProvider) =>
 
 export const TrackingContext = createContext();
 
-export const TrackingProvider = ({ children }) => {
-  const DappName = "Tracking Dapp";
-  const [currentUser, setCurrentUser] = useState("");
+// User roles enum
+export const USER_ROLES = {
+  SUPPLIER: 'supplier',
+  PRODUCER: 'producer', // Previously manufacturer
+  CUSTOMER: 'customer'
+};
 
-  // Helper to connect wallet
-  const connectWallet = async () => {
+// Role permissions
+export const ROLE_PERMISSIONS = {
+  [USER_ROLES.SUPPLIER]: {
+    canAddRawMaterials: true,
+    canViewRawMaterials: true,
+    canViewProducers: true,
+    canViewCustomers: false,
+    canCreateShipments: true,
+    canViewOwnShipments: true,
+    dashboardPath: '/dashboard/supplier'
+  },
+  [USER_ROLES.PRODUCER]: {
+    canBuyRawMaterials: true,
+    canAddProducts: true,
+    canViewProducts: true,
+    canViewSuppliers: true,
+    canViewCustomers: true,
+    canCreateShipments: true,
+    canViewOwnShipments: true,
+    dashboardPath: '/dashboard/producer'
+  },
+  [USER_ROLES.CUSTOMER]: {
+    canBuyProducts: true,
+    canViewProducts: true,
+    canViewSuppliers: false,
+    canViewProducers: false,
+    canViewOwnPurchases: true,
+    dashboardPath: '/dashboard/customer'
+  }
+};
+
+export const TrackingProvider = ({ children }) => {
+  const DappName = "Supply Chain Tracking DApp";
+  const [currentUser, setCurrentUser] = useState("");
+  const [userRole, setUserRole] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
+
+  // Login with username/email and password
+  const login = async (identifier, password) => {
     try {
-      if (!window.ethereum) throw new Error("Please install MetaMask.");
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
+      setLoading(true);
+
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ identifier, password }),
       });
-      setCurrentUser(accounts[0]);
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Store authentication data
+      const profile = {
+        ...data.user,
+        authenticatedAt: new Date().toISOString()
+      };
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userProfile', JSON.stringify(profile));
+      }
+
+      setAuthToken(data.token);
+      setUserProfile(profile);
+      setCurrentUser(data.user.walletAddress);
+      setUserRole(data.user.role);
+      setIsAuthenticated(true);
+      setLoading(false);
+
+      return profile;
     } catch (error) {
-      console.error("Error connecting wallet:", error.message || error);
+      console.error("Error during login:", error.message || error);
+      setLoading(false);
+      throw error;
     }
   };
 
-  // Check wallet connection
-  const checkWalletConnection = async () => {
+  // Register new user
+  const register = async (userData) => {
+    try {
+      setLoading(true);
+
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Registration failed');
+      }
+
+      setLoading(false);
+      return data.user;
+    } catch (error) {
+      console.error("Error during registration:", error.message || error);
+      setLoading(false);
+      throw error;
+    }
+  };
+
+  // Connect to MetaMask and verify it matches authenticated user
+  const connectMetaMask = async () => {
     try {
       if (!window.ethereum) throw new Error("Please install MetaMask.");
+
       const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-      if (accounts.length) setCurrentUser(accounts[0]);
-
-      // Listen for account and network changes
-      window.ethereum.on("accountsChanged", (accounts) => {
-        setCurrentUser(accounts.length ? accounts[0] : "");
+        method: "eth_requestAccounts",
       });
 
-      window.ethereum.on("chainChanged", () => {
-        window.location.reload();
-      });
+      const connectedAddress = accounts[0];
+
+      // If user is authenticated, verify the connected wallet matches
+      if (isAuthenticated && currentUser) {
+        if (connectedAddress.toLowerCase() !== currentUser.toLowerCase()) {
+          throw new Error(
+            `Please connect the MetaMask wallet that matches your registered address: ${currentUser}`
+          );
+        }
+      }
+
+      return connectedAddress;
     } catch (error) {
-      console.error("Error checking wallet connection:", error.message || error);
+      console.error("Error connecting to MetaMask:", error.message || error);
+      throw error;
+    }
+  };
+
+  // Verify MetaMask wallet matches authenticated user
+  const verifyWalletConnection = async () => {
+    try {
+      if (!isAuthenticated || !currentUser) {
+        return false;
+      }
+
+      if (!window.ethereum) {
+        throw new Error("MetaMask not detected. Please install MetaMask.");
+      }
+
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+
+      if (accounts.length === 0) {
+        throw new Error("No MetaMask accounts connected. Please connect your wallet.");
+      }
+
+      const connectedAddress = accounts[0];
+
+      if (connectedAddress.toLowerCase() !== currentUser.toLowerCase()) {
+        throw new Error(
+          `Wallet mismatch! Please connect the MetaMask wallet that matches your registered address: ${currentUser}`
+        );
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Wallet verification error:", error.message || error);
+      throw error;
+    }
+  };
+
+  // Sync MetaMask with authenticated user
+  const syncMetaMaskWithUser = async () => {
+    try {
+      if (!isAuthenticated || !currentUser) {
+        return false;
+      }
+
+      // Check if MetaMask is available
+      if (!window.ethereum) {
+        console.warn("MetaMask not available");
+        return false;
+      }
+
+      // Get connected accounts
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+
+      if (accounts.length === 0) {
+        // No accounts connected, prompt user to connect
+        console.log("No MetaMask accounts connected");
+        return false;
+      }
+
+      const connectedAddress = accounts[0];
+
+      // Check if connected address matches authenticated user
+      if (connectedAddress.toLowerCase() === currentUser.toLowerCase()) {
+        console.log("MetaMask wallet matches authenticated user");
+        return true;
+      } else {
+        console.warn("MetaMask wallet does not match authenticated user");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error syncing MetaMask with user:", error);
+      return false;
+    }
+  };
+
+  // Logout user
+  const logout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userProfile');
+    }
+    setAuthToken(null);
+    setCurrentUser("");
+    setUserRole(null);
+    setIsAuthenticated(false);
+    setUserProfile(null);
+  };
+
+  // Check if user has permission
+  const hasPermission = (permission) => {
+    if (!userRole || !isAuthenticated) return false;
+    return ROLE_PERMISSIONS[userRole]?.[permission] || false;
+  };
+
+  // Get role-specific dashboard path
+  const getDashboardPath = () => {
+    if (!userRole) return '/';
+    return ROLE_PERMISSIONS[userRole]?.dashboardPath || '/';
+  };
+
+  // Restore user session from localStorage
+  const restoreSession = async () => {
+    try {
+      setLoading(true);
+
+      // Check if we're on the client side
+      if (typeof window === 'undefined') {
+        setLoading(false);
+        return;
+      }
+
+      // Check for stored authentication data
+      const storedToken = localStorage.getItem('authToken');
+      const storedProfile = localStorage.getItem('userProfile');
+
+      if (storedToken && storedProfile) {
+        try {
+          const profile = JSON.parse(storedProfile);
+
+          // Basic token expiration check (decode without verification)
+          const tokenParts = storedToken.split('.');
+          if (tokenParts.length === 3) {
+            const payload = JSON.parse(atob(tokenParts[1]));
+
+            if (payload.exp && payload.exp > Date.now() / 1000) {
+              // Token is still valid
+              setAuthToken(storedToken);
+              setUserProfile(profile);
+              setCurrentUser(profile.walletAddress);
+              setUserRole(profile.role);
+              setIsAuthenticated(true);
+            } else {
+              // Token expired
+              logout();
+            }
+          } else {
+            // Invalid token format
+            logout();
+          }
+        } catch (error) {
+          // Invalid token or profile data
+          logout();
+        }
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error restoring session:", error.message || error);
+      setLoading(false);
     }
   };
 
@@ -193,25 +448,90 @@ export const TrackingProvider = ({ children }) => {
     }
   };
 
+  // Auto-sync MetaMask when user authentication changes
   useEffect(() => {
-    checkWalletConnection();
+    if (isAuthenticated && currentUser) {
+      // Automatically check MetaMask connection when user logs in
+      syncMetaMaskWithUser().then((isMatched) => {
+        if (!isMatched) {
+          console.log("MetaMask wallet does not match authenticated user. User may need to switch accounts.");
+        }
+      });
+    }
+  }, [isAuthenticated, currentUser]);
+
+  // Listen for MetaMask account changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      const handleAccountsChanged = (accounts) => {
+        if (isAuthenticated && currentUser && accounts.length > 0) {
+          const connectedAddress = accounts[0];
+          if (connectedAddress.toLowerCase() !== currentUser.toLowerCase()) {
+            console.warn("MetaMask account changed and doesn't match authenticated user");
+            // Optionally show a warning to the user
+          } else {
+            console.log("MetaMask account matches authenticated user");
+          }
+        }
+      };
+
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+      return () => {
+        if (window.ethereum.removeListener) {
+          window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        }
+      };
+    }
+  }, [isAuthenticated, currentUser]);
+
+  useEffect(() => {
+    restoreSession();
   }, []);
 
   return (
     <TrackingContext.Provider
       value={{
+        // User Authentication
         currentUser,
-        connectWallet,
+        userRole,
+        isAuthenticated,
+        loading,
+        userProfile,
+        authToken,
+        login,
+        register,
+        logout,
+        hasPermission,
+        getDashboardPath,
+        connectMetaMask,
+        verifyWalletConnection,
+        syncMetaMaskWithUser,
+
+        // Blockchain Functions
         createShipment,
         getAllShipments,
         getShipmentCount,
         completeShipment,
         getShipment,
         startShipment,
+
+        // Constants
         DappName,
+        USER_ROLES,
+        ROLE_PERMISSIONS,
       }}
     >
       {children}
     </TrackingContext.Provider>
   );
+};
+
+// Custom hook to use the tracking context
+export const useTracking = () => {
+  const context = useContext(TrackingContext);
+  if (!context) {
+    throw new Error('useTracking must be used within a TrackingProvider');
+  }
+  return context;
 };
