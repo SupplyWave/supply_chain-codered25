@@ -129,10 +129,13 @@ export default function GPSTrackingUpdate({ order, onUpdate }) {
       let updateData, apiEndpoint;
 
       if (isRawMaterial) {
+        // Extract payment ID from order ID (format: materialId-paymentId)
+        const paymentId = order._id.split('-')[1] || order.transactionHash;
+
         // Raw material tracking data
         updateData = {
           materialId: order.materialId,
-          paymentId: order.customerId, // Use customer ID as payment identifier
+          paymentId: paymentId,
           status: selectedStatus,
           description: description || trackingStatuses.find(s => s.value === selectedStatus)?.description || 'Status updated',
           location: {

@@ -1,24 +1,10 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { useTracking } from "../Context/Tracking";
 import Link from "next/link";
 
 export default function Home() {
-  const router = useRouter();
+  const { loading } = useTracking();
 
-  const {
-    isAuthenticated,
-    userRole,
-    loading,
-    getDashboardPath
-  } = useTracking();
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated && userRole) {
-      router.push(getDashboardPath());
-    }
-  }, [isAuthenticated, userRole, router, getDashboardPath]);
+  // Note: Removed auto-redirect to allow users to visit home page even when logged in
 
 
 
@@ -37,13 +23,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+      <section className="relative gradient-primary text-white">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
               Revolutionizing Supply Chain
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-200 to-blue-200">
                 with Blockchain Technology
               </span>
             </h1>
@@ -52,10 +38,10 @@ export default function Home() {
               Connect suppliers, producers, and customers in a trustless ecosystem.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/login" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+              <Link href="/auth/login" className="btn btn-accent text-lg px-8 py-4 shadow-medium transform hover:scale-105">
                 Get Started
               </Link>
-              <Link href="#about" className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200">
+              <Link href="#about" className="btn btn-outline border-white text-white hover:bg-white hover:text-primary text-lg px-8 py-4">
                 Learn More
               </Link>
             </div>
@@ -70,13 +56,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
               Why Choose Our Platform?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-medium max-w-3xl mx-auto">
               Experience the future of supply chain management with our cutting-edge blockchain solution
             </p>
           </div>

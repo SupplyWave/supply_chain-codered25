@@ -42,12 +42,31 @@ export default async function handler(req, res) {
       });
     }
 
+
+
     // Find the specific payment/order
-    const payment = material.approvedPayments.find(p => 
-      p._id.toString() === paymentId || 
-      p.transactionHash === paymentId ||
-      (p.manufacturerWalletAddress && p.manufacturerWalletAddress.toLowerCase() === paymentId.toLowerCase())
-    );
+    const payment = material.approvedPayments.find(p => {
+      // Try to match by _id if it exists
+      if (p._id && p._id.toString() === paymentId) {
+        return true;
+      }
+      // Try to match by transaction hash
+      if (p.transactionHash === paymentId) {
+        return true;
+      }
+      // Try to match by wallet address
+      if (p.producerWalletAddress && p.producerWalletAddress.toLowerCase() === paymentId.toLowerCase()) {
+        return true;
+      }
+      if (p.manufacturerWalletAddress && p.manufacturerWalletAddress.toLowerCase() === paymentId.toLowerCase()) {
+        return true;
+      }
+      // Try to match by date (as fallback)
+      if (p.date && p.date.toString() === paymentId) {
+        return true;
+      }
+      return false;
+    });
 
     if (!payment) {
       return res.status(404).json({
