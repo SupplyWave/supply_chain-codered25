@@ -11,7 +11,8 @@ const RawMaterialSchema = new mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   location: { type: String, required: true },
-  addedBy: { type: String, required: true }, // MetaMask address of the user
+  addedBy: { type: String, required: true }, 
+  t_id:{type:String},// MetaMask address of the user
   approvedPayments: [ApprovedPaymentSchema],
 });
 

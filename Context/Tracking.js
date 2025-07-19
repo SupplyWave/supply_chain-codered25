@@ -75,7 +75,6 @@ export const TrackingProvider = ({ children }) => {
         receiver,
         new Date(pickupTime).getTime(),
         distance,
-        ethers.utils.parseUnits(price, 18),
         { value: ethers.utils.parseUnits(price, 18), gasLimit: 300000 }
       );
       await createItem.wait();
@@ -108,14 +107,14 @@ export const TrackingProvider = ({ children }) => {
 };
 
   // Get shipment count
-  const getShipmentsCount = async () => {
+  const getShipmentCount = async () => {
     try {
       if (!window.ethereum) throw new Error("Please install MetaMask.");
       const accounts = await window.ethereum.request({ method: "eth_accounts" });
-      const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/"); // Add network URL (Ropsten/Mainnet)
+      const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/");
       const contract = fetchContract(provider);
 
-      const shipmentsCount = await contract.getShipmentsCount(accounts[0]);
+      const shipmentsCount = await contract.getShipmentCount(accounts[0]);
       return shipmentsCount.toNumber();
     } catch (error) {
       console.error("Error getting shipments count:", error.message || error);
@@ -124,9 +123,9 @@ export const TrackingProvider = ({ children }) => {
 
   // Start shipment
   const startShipment = async (getProduct) => {
-    const { receiver, index } = getProduct;
+    const { sender, index } = getProduct;
     try {
-      validateInputs({ receiver, index });
+      validateInputs({ sender, index });
 
       const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
@@ -135,8 +134,7 @@ export const TrackingProvider = ({ children }) => {
       const contract = fetchContract(signer);
 
       const shipment = await contract.startShipment(
-        currentUser,
-        receiver,
+        sender,
         index,
         { gasLimit: 300000 }
       );
@@ -149,9 +147,9 @@ export const TrackingProvider = ({ children }) => {
 
   // Complete shipment
   const completeShipment = async (completeShip) => {
-    const { receiver, index } = completeShip;
+    const { sender, index } = completeShip;
     try {
-      validateInputs({ receiver, index });
+      validateInputs({ sender, index });
 
       const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
@@ -160,8 +158,7 @@ export const TrackingProvider = ({ children }) => {
       const contract = fetchContract(signer);
 
       const transaction = await contract.completeShipment(
-        currentUser,
-        receiver,
+        sender,
         index,
         { gasLimit: 300000 }
       );
@@ -207,7 +204,7 @@ export const TrackingProvider = ({ children }) => {
         connectWallet,
         createShipment,
         getAllShipments,
-        getShipmentsCount,
+        getShipmentCount,
         completeShipment,
         getShipment,
         startShipment,
