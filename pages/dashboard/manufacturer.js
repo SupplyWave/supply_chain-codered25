@@ -222,7 +222,7 @@
 import { useEffect, useState } from "react";
 import Web3 from "web3";
 
-export default function SupplierDashboard() {
+export default function ProducerDashboard() {
   const [rawMaterials, setRawMaterials] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(null);

@@ -1,48 +1,59 @@
-import { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
-const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Customer", href: "/dashboard/customer" },
-  { name: "Manufacturer", href: "/dashboard/manufacturer" },
-  { name: "Supplier", href: "/dashboard/supplier" },
-  { name: "Tracking", href: "/table_dispaly" },
-];
+import { useTracking } from "../Context/Tracking";
+import { useRouter } from "next/router";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 const NavBar = () => {
-  const [currentAccount, setCurrentAccount] = useState(null);
+  const router = useRouter();
+  const {
+    currentUser,
+    isAuthenticated,
+    userRole,
+    logout,
+    hasPermission,
+    USER_ROLES,
 
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setCurrentAccount(accounts[0]);
-      } catch (err) {
-        console.error("User denied wallet connection:", err);
-      }
-    } else {
-      alert("Please install MetaMask to connect your wallet!");
+  } = useTracking();
+
+  // Get role-based navigation items
+  const getNavigationItems = () => {
+    const baseItems = [
+      { name: "Home", href: "/" }
+    ];
+
+    if (!isAuthenticated) {
+      return baseItems;
     }
+
+    const roleItems = [];
+
+    // Add role-specific dashboard
+    if (userRole === USER_ROLES.SUPPLIER) {
+      roleItems.push({ name: "Dashboard", href: "/dashboard/supplier" });
+    } else if (userRole === USER_ROLES.PRODUCER) {
+      roleItems.push({ name: "Dashboard", href: "/dashboard/producer" });
+    } else if (userRole === USER_ROLES.CUSTOMER) {
+      roleItems.push({ name: "Dashboard", href: "/dashboard/customer" });
+    }
+
+    // Add tracking if user has permission (but not for producers)
+    if (hasPermission('canViewOwnShipments') && userRole !== USER_ROLES.PRODUCER) {
+      roleItems.push({ name: "Tracking", href: "/table_dispaly" });
+    }
+
+    return [...baseItems, ...roleItems];
   };
 
-  useEffect(() => {
-    const checkIfWalletIsConnected = async () => {
-      if (window.ethereum) {
-        const accounts = await window.ethereum.request({ method: "eth_accounts" });
-        if (accounts.length > 0) {
-          setCurrentAccount(accounts[0]);
-        }
-      }
-    };
-    checkIfWalletIsConnected();
-  }, []);
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
+
+  const navigation = getNavigationItems();
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -55,46 +66,71 @@ const NavBar = () => {
             </Disclosure.Button>
           </div>
 
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex flex-shrink-0 items-center">
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                alt="Logo"
-              />
+          {/* Logo Section */}
+          <div className="flex flex-shrink-0 items-center">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
+                <span className="text-white font-bold text-xl">SC</span>
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-white font-bold text-xl">SupplyChain</h1>
+                <p className="text-gray-300 text-xs">Blockchain Platform</p>
+              </div>
             </div>
+          </div>
 
-            <div className="hidden sm:ml-6 sm:block">
+          {/* Navigation Links - Centered */}
+          <div className="flex-1 flex justify-center">
+            <div className="hidden sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
-                  <a
+                  <button
                     key={item.name}
-                    href={item.href}
+                    onClick={() => router.push(item.href)}
                     className={classNames(
                       "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-sm font-medium"
+                      "rounded-md px-3 py-2 text-sm font-medium transition-colors"
                     )}
                   >
                     {item.name}
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* MetaMask Button */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-            {currentAccount ? (
-              <span className="text-white px-3 py-2 rounded-md bg-gray-700 text-sm font-medium">
-                {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)}
-              </span>
+          {/* User Account Section - Right Side */}
+          <div className="flex items-center space-x-3">
+            {isAuthenticated && currentUser ? (
+              <>
+                <div className="text-white text-sm">
+                  <div className="font-medium capitalize">{userRole}</div>
+                  <div className="text-gray-300 text-xs">
+                    {currentUser.slice(0, 6)}...{currentUser.slice(-4)}
+                  </div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-white px-3 py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm font-medium transition-colors"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
-              <button
-                onClick={connectWallet}
-                className="text-white px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium"
-              >
-                Connect Wallet
-              </button>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => router.push('/auth/login')}
+                  className="text-white px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => router.push('/auth/register')}
+                  className="text-indigo-600 px-4 py-2 bg-white hover:bg-gray-100 rounded-md text-sm font-medium transition-colors"
+                >
+                  Register
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -103,14 +139,13 @@ const NavBar = () => {
       <Disclosure.Panel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
-            <Disclosure.Button
+            <button
               key={item.name}
-              as="a"
-              href={item.href}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              onClick={() => router.push(item.href)}
+              className="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               {item.name}
-            </Disclosure.Button>
+            </button>
           ))}
         </div>
       </Disclosure.Panel>
