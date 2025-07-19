@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useTracking } from "../../Context/Tracking";
 import MetaMaskStatus from "../../Components/MetaMaskStatus";
 import GPSTrackingUpdate from "../../Components/GPSTrackingUpdate";
-import ProfileDropdown from "../../Components/ProfileDropdown";
 import Web3 from "web3";
 import { serializeTransactionReceipt, handleWeb3Error } from "../../utils/blockchain";
 
@@ -15,8 +14,7 @@ export default function ProducerDashboard() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedOrderForUpdate, setSelectedOrderForUpdate] = useState(null);
-  const [activeTab, setActiveTab] = useState('recommendations'); // 'recommendations', 'materials', 'products', 'orders', 'tracking'
-  const [recommendations, setRecommendations] = useState([]);
+  const [activeTab, setActiveTab] = useState('materials'); // 'materials', 'products', 'orders', 'tracking'
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -34,7 +32,6 @@ export default function ProducerDashboard() {
 
   useEffect(() => {
     if (isAuthenticated && hasPermission('canViewSuppliers')) {
-      fetchRecommendations();
       fetchRawMaterials();
       fetchProducts();
       fetchOrders();
@@ -105,16 +102,50 @@ export default function ProducerDashboard() {
 
   const fetchRawMaterialPurchases = async () => {
     try {
-      // Fetch raw material purchases where the producer is the buyer
-      const response = await fetch(`/api/purchases/user?userId=${currentUser}&role=customer`);
+      // Fetch all raw materials to find ones where this producer has made payments
+      const response = await fetch('/api/rawMaterial');
       const data = await response.json();
+
       if (data.success) {
-        // Filter for raw material purchases only
-        const rawMaterialOrders = data.data.filter(purchase =>
-          purchase.productType === 'rawMaterial' ||
-          purchase.category === 'Raw Material' ||
-          purchase.isRawMaterial === true
-        );
+        // Find raw materials where this producer has made approved payments
+        const rawMaterialOrders = [];
+
+        data.data.forEach(material => {
+          if (material.approvedPayments && material.approvedPayments.length > 0) {
+            // Find payments made by this producer
+            const producerPayments = material.approvedPayments.filter(payment =>
+              payment.producerWalletAddress?.toLowerCase() === currentUser?.toLowerCase() ||
+              payment.manufacturerWalletAddress?.toLowerCase() === currentUser?.toLowerCase()
+            );
+
+            // Create order objects for each payment with tracking data
+            producerPayments.forEach(payment => {
+              rawMaterialOrders.push({
+                _id: `${material._id}-${payment._id || payment.date}`,
+                materialId: material._id,
+                materialName: material.name,
+                materialDescription: material.description || '',
+                quantity: material.quantity || 1,
+                unitPrice: material.price,
+                totalAmount: payment.amountPaid,
+                supplierId: material.addedBy,
+                supplierName: 'Supplier', // Could be enhanced with actual supplier name
+                transactionHash: payment.transactionHash,
+                deliveryAddress: material.location,
+                currentStatus: payment.currentStatus || 'order_placed',
+                orderDate: payment.date,
+                trackingEvents: payment.trackingEvents || [],
+                isRawMaterial: true,
+                // Additional purchase info
+                productName: material.name,
+                productDescription: material.description,
+                category: 'Raw Material',
+                productType: 'rawMaterial'
+              });
+            });
+          }
+        });
+
         setRawMaterialPurchases(rawMaterialOrders);
       } else {
         console.error("Failed to fetch raw material purchases.");
@@ -124,19 +155,7 @@ export default function ProducerDashboard() {
     }
   };
 
-  const fetchRecommendations = async () => {
-    try {
-      const response = await fetch(`/api/products/recommendations?userId=${currentUser}&type=create`);
-      const data = await response.json();
-      if (data.success) {
-        setRecommendations(data.data);
-      } else {
-        console.error("Failed to fetch recommendations.");
-      }
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
-    }
-  };
+
 
   const handleAddProduct = async () => {
     if (!hasPermission('canAddProducts')) {
@@ -259,20 +278,20 @@ export default function ProducerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-light p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Producer Dashboard</h1>
-            <p className="text-gray-600">
+            <h1 className="text-3xl font-bold text-primary mb-2">Producer Dashboard</h1>
+            <p className="text-medium">
               Welcome back! Manage your raw materials and products.
             </p>
-            <div className="mt-2 text-sm text-gray-500">
+            <div className="mt-2 text-sm text-light">
               Connected as: {currentUser?.slice(0, 6)}...{currentUser?.slice(-4)}
             </div>
           </div>
-          <ProfileDropdown />
+
         </div>
 
         {/* MetaMask Status */}
@@ -280,56 +299,107 @@ export default function ProducerDashboard() {
           <MetaMaskStatus />
         </div>
 
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="card shadow-medium">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <h2 className="text-lg font-semibold text-primary">Raw Materials</h2>
+                <p className="text-3xl font-bold text-secondary">{rawMaterials.length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card shadow-medium">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-accent bg-opacity-10 text-accent">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <h2 className="text-lg font-semibold text-primary">My Products</h2>
+                <p className="text-3xl font-bold text-accent">{products.length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card shadow-medium">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-primary bg-opacity-10 text-primary">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <h2 className="text-lg font-semibold text-primary">Orders</h2>
+                <p className="text-3xl font-bold text-primary">{orders.length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card shadow-medium">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <h2 className="text-lg font-semibold text-primary">Tracking</h2>
+                <p className="text-3xl font-bold text-secondary">{rawMaterialPurchases.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Tab Navigation */}
-        <div className="bg-white rounded-xl shadow-lg mb-8">
+        <div className="card mb-8">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
-              <button
-                onClick={() => setActiveTab('recommendations')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'recommendations'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Product Recommendations
-              </button>
+
               <button
                 onClick={() => setActiveTab('materials')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'materials'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                 }`}
               >
                 Raw Materials
               </button>
               <button
                 onClick={() => setActiveTab('products')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'products'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                 }`}
               >
                 My Products
               </button>
               <button
                 onClick={() => setActiveTab('orders')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'orders'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                 }`}
               >
                 Order Management
               </button>
               <button
                 onClick={() => setActiveTab('tracking')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'tracking'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                 }`}
               >
                 Raw Material Tracking
@@ -340,68 +410,7 @@ export default function ProducerDashboard() {
 
         {/* Tab Content */}
         <div>
-          {/* Recommendations Tab */}
-          {activeTab === 'recommendations' && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">Product Recommendations for Your Business</h2>
 
-                {recommendations.length > 0 ? (
-                  recommendations.map((recommendation, index) => (
-                    <div key={index} className="mb-8 p-6 border border-gray-200 rounded-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-semibold text-gray-800">{recommendation.title}</h3>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          recommendation.priority === 'high' ? 'bg-red-100 text-red-800' :
-                          recommendation.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {recommendation.priority.toUpperCase()} PRIORITY
-                        </span>
-                      </div>
-
-                      <p className="text-gray-600 mb-4">{recommendation.description}</p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {recommendation.items.map((item, itemIndex) => (
-                          <div key={itemIndex} className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-gray-800 mb-2">{item.name || item.category}</h4>
-                            <div className="text-sm text-gray-600 space-y-1">
-                              {item.reason && <p><strong>Reason:</strong> {item.reason}</p>}
-                              {item.opportunity && <p><strong>Opportunity:</strong> {item.opportunity}</p>}
-                              {item.estimatedDemand && <p><strong>Demand:</strong> {item.estimatedDemand}</p>}
-                              {item.searchCount && <p><strong>Search Volume:</strong> {item.searchCount}</p>}
-                              {item.trend && <p><strong>Trend:</strong> {item.trend}</p>}
-                            </div>
-                            <button
-                              onClick={() => {
-                                setNewProduct({
-                                  ...newProduct,
-                                  name: item.name || '',
-                                  category: item.category || ''
-                                });
-                                setActiveTab('products');
-                                setShowModal(true);
-                              }}
-                              className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors text-sm"
-                            >
-                              Create This Product
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">💡</div>
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">Loading Recommendations</h3>
-                    <p className="text-gray-500">We're analyzing market data to provide personalized product recommendations...</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Raw Materials Tab */}
           {activeTab === 'materials' && (
@@ -733,6 +742,11 @@ export default function ProducerDashboard() {
                   <h3 className="text-xl font-semibold text-gray-600 mb-2">No Raw Material Orders</h3>
                   <p className="text-gray-500">Your raw material orders and their GPS tracking information will appear here.</p>
                   <p className="text-gray-400 text-sm mt-2">Purchase raw materials from suppliers to see tracking information.</p>
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left">
+                    <p className="text-xs text-gray-600">Debug Info:</p>
+                    <p className="text-xs text-gray-500">Current User: {currentUser}</p>
+                    <p className="text-xs text-gray-500">Raw Material Orders Found: {rawMaterialPurchases.length}</p>
+                  </div>
                 </div>
               )}
             </div>

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTracking } from '../Context/Tracking';
+import { useRouter } from 'next/router';
 
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +25,8 @@ export default function ProfileDropdown() {
   });
 
   const dropdownRef = useRef(null);
-  const { currentUser, userProfile } = useTracking();
+  const router = useRouter();
+  const { currentUser, userProfile, logout } = useTracking();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -108,6 +110,11 @@ export default function ProfileDropdown() {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
   };
 
   const getInitials = () => {
@@ -222,10 +229,10 @@ export default function ProfileDropdown() {
                   ✏️ Edit Profile
                 </button>
                 <button
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                  onClick={handleLogout}
+                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
                 >
-                  Close
+                  🚪 Logout
                 </button>
               </div>
             </div>

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useTracking } from "../../Context/Tracking";
 import ProtectedRoute from "../../Components/ProtectedRoute";
 import MetaMaskStatus from "../../Components/MetaMaskStatus";
-import ProfileDropdown from "../../Components/ProfileDropdown";
 import Web3 from "web3";
 import { serializeTransactionReceipt, handleWeb3Error } from "../../utils/blockchain";
 
@@ -206,20 +205,20 @@ export default function CustomerDashboard() {
 
   return (
     <ProtectedRoute requiredRole={USER_ROLES.CUSTOMER}>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-light p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Customer Dashboard</h1>
-              <p className="text-gray-600">
+              <h1 className="text-3xl font-bold text-primary mb-2">Customer Dashboard</h1>
+              <p className="text-medium">
                 Browse and purchase products directly from producers.
               </p>
-              <div className="mt-2 text-sm text-gray-500">
+              <div className="mt-2 text-sm text-light">
                 Connected as: {currentUser?.slice(0, 6)}...{currentUser?.slice(-4)}
               </div>
             </div>
-            <ProfileDropdown />
+
           </div>
 
           {/* MetaMask Status */}
@@ -229,65 +228,71 @@ export default function CustomerDashboard() {
 
           {/* Stats Card */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-blue-100 text-blue-600">
-                  🛒
+                <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Available Products</p>
-                  <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+                  <p className="text-sm font-medium text-medium">Available Products</p>
+                  <p className="text-2xl font-bold text-secondary">{products.length}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-green-100 text-green-600">
-                  🏭
+                <div className="p-3 rounded-full bg-accent bg-opacity-10 text-accent">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Active Producers</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-medium">Active Producers</p>
+                  <p className="text-2xl font-bold text-accent">
                     {new Set(products.map(p => p.addedBy)).size}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-                  📦
+                <div className="p-3 rounded-full bg-primary bg-opacity-10 text-primary">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">My Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{purchases.length}</p>
+                  <p className="text-sm font-medium text-medium">My Orders</p>
+                  <p className="text-2xl font-bold text-primary">{purchases.length}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-white rounded-xl shadow-lg mb-8">
+          <div className="card mb-8">
             <div className="border-b border-gray-200">
               <nav className="flex space-x-8 px-6">
                 <button
                   onClick={() => setActiveTab('products')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === 'products'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-accent text-accent'
+                      : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                   }`}
                 >
                   Available Products
                 </button>
                 <button
                   onClick={() => setActiveTab('orders')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === 'orders'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-accent text-accent'
+                      : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                   }`}
                 >
                   My Orders & Tracking

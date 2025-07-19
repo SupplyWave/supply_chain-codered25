@@ -5,7 +5,7 @@ const RawMaterialTrackingEventSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ['order_placed', 'processing', 'shipped', 'in_transit', 'delivered'],
+    enum: ['order_placed', 'payment_confirmed', 'processing', 'shipped', 'in_transit', 'out_for_delivery', 'delivered', 'cancelled'],
     default: 'order_placed'
   },
   location: {
@@ -69,7 +69,7 @@ const ApprovedPaymentSchema = new mongoose.Schema({
   // Tracking information for this specific order
   currentStatus: {
     type: String,
-    enum: ['order_placed', 'processing', 'shipped', 'in_transit', 'delivered'],
+    enum: ['order_placed', 'payment_confirmed', 'processing', 'shipped', 'in_transit', 'out_for_delivery', 'delivered', 'cancelled'],
     default: 'order_placed'
   },
   trackingEvents: [RawMaterialTrackingEventSchema],
@@ -82,6 +82,7 @@ const ApprovedPaymentSchema = new mongoose.Schema({
 });
 
 const RawMaterialSchema = new mongoose.Schema({
+  // Basic Product Information
   name: {
     type: String,
     required: true,
@@ -90,27 +91,71 @@ const RawMaterialSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    trim: true
+    trim: true,
+    default: ''
   },
+  category: {
+    type: String,
+    enum: ['Raw Material', 'Plastic', 'Organic Produce', 'Metal Parts', 'Chemicals', 'Electronics', 'Textiles', 'metals', 'plastics', 'textiles', 'chemicals', 'electronics', 'other'],
+    default: 'Raw Material'
+  },
+
+  // Technical Details
+  technicalSpecs: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  materialType: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
+  // Pricing Information
   price: {
     type: Number,
     required: true,
     min: 0
   },
+  currency: {
+    type: String,
+    enum: ['ETH', 'USD', 'INR'],
+    default: 'ETH'
+  },
+
+  // Quantity & Availability
   quantity: {
+    type: Number,
+    default: 1,
+    min: 0
+  },
+  availableStock: {
     type: Number,
     default: 1,
     min: 0
   },
   unit: {
     type: String,
+    enum: ['kg', 'tons', 'pieces', 'liters', 'meters'],
     default: 'kg'
   },
+
+  // Location
   location: {
     type: String,
     required: true,
     trim: true
   },
+
+  // Images & Documents
+  productImages: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
+  // Supplier Information
   addedBy: {
     type: String,
     required: true,
@@ -122,16 +167,8 @@ const RawMaterialSchema = new mongoose.Schema({
     default: 'supplier',
     enum: ['supplier']
   },
-  category: {
-    type: String,
-    enum: ['metals', 'plastics', 'textiles', 'chemicals', 'electronics', 'other'],
-    default: 'other'
-  },
-  quality: {
-    type: String,
-    enum: ['premium', 'standard', 'basic'],
-    default: 'standard'
-  },
+
+  // Availability Status
   isAvailable: {
     type: Boolean,
     default: true
