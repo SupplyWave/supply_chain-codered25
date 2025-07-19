@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   switch (method) {
     case "POST":
       try {
-        const { name, price, location, addedBy, manufacturerName, amountPaid } = req.body;
+        const { name, price, location, addedBy, manufacturerName, amountPaid,t_id} = req.body;
 
         // Ensure the required fields are provided
         if (!name || !price || !location || !addedBy) {
