@@ -2,6 +2,7 @@ import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useTracking } from "../Context/Tracking";
 import { useRouter } from "next/router";
+import ProfileDropdown from "./ProfileDropdown";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -13,120 +14,85 @@ const NavBar = () => {
     currentUser,
     isAuthenticated,
     userRole,
-    logout,
-    hasPermission,
     USER_ROLES,
-
   } = useTracking();
 
-  // Get role-based navigation items
-  const getNavigationItems = () => {
-    const baseItems = [
-      { name: "Home", href: "/" }
-    ];
-
-    if (!isAuthenticated) {
-      return baseItems;
-    }
-
-    const roleItems = [];
-
-    // Add role-specific dashboard
+  // Get role-based dashboard path
+  const getDashboardPath = () => {
     if (userRole === USER_ROLES.SUPPLIER) {
-      roleItems.push({ name: "Dashboard", href: "/dashboard/supplier" });
+      return "/dashboard/supplier";
     } else if (userRole === USER_ROLES.PRODUCER) {
-      roleItems.push({ name: "Dashboard", href: "/dashboard/producer" });
+      return "/dashboard/producer";
     } else if (userRole === USER_ROLES.CUSTOMER) {
-      roleItems.push({ name: "Dashboard", href: "/dashboard/customer" });
+      return "/dashboard/customer";
     }
-
-    // Add tracking if user has permission (but not for producers)
-    if (hasPermission('canViewOwnShipments') && userRole !== USER_ROLES.PRODUCER) {
-      roleItems.push({ name: "Tracking", href: "/table_dispaly" });
-    }
-
-    return [...baseItems, ...roleItems];
+    return "/dashboard";
   };
-
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
-
-  const navigation = getNavigationItems();
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-primary shadow-soft">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
+            <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white transition-all duration-200">
               <Bars3Icon className="block h-6 w-6" />
               <XMarkIcon className="hidden h-6 w-6" />
             </Disclosure.Button>
           </div>
 
-          {/* Logo Section */}
-          <div className="flex flex-shrink-0 items-center">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-xl">SC</span>
-              </div>
-              <div className="hidden sm:block">
+          {/* Company Name and Navigation */}
+          <div className="flex items-center space-x-8">
+            {/* Company Name */}
+            <div className="flex-shrink-0">
+              <div className="flex items-center">
                 <h1 className="text-white font-bold text-xl">SupplyChain</h1>
-                <p className="text-gray-300 text-xs">Blockchain Platform</p>
+                <p className="text-gray-200 text-xs ml-2 hidden sm:block">Blockchain Platform</p>
               </div>
             </div>
-          </div>
 
-          {/* Navigation Links - Centered */}
-          <div className="flex-1 flex justify-center">
-            <div className="hidden sm:block">
-              <div className="flex space-x-4">
-                {navigation.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => router.push(item.href)}
-                    className={classNames(
-                      "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-sm font-medium transition-colors"
-                    )}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
+            {/* Navigation Links */}
+            <div className="hidden sm:flex items-center space-x-6">
+              <button
+                onClick={() => router.push('/')}
+                className={classNames(
+                  "text-gray-200 hover:bg-white hover:bg-opacity-10 hover:text-white",
+                  "rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
+                  router.pathname === '/' && "bg-white bg-opacity-20 text-white shadow-soft"
+                )}
+              >
+                Home
+              </button>
+
+              {isAuthenticated && (
+                <button
+                  onClick={() => router.push(getDashboardPath())}
+                  className={classNames(
+                    "text-gray-200 hover:bg-white hover:bg-opacity-10 hover:text-white",
+                    "rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
+                    router.pathname.includes('/dashboard') && "bg-white bg-opacity-20 text-white shadow-soft"
+                  )}
+                >
+                  Dashboard
+                </button>
+              )}
             </div>
           </div>
 
           {/* User Account Section - Right Side */}
           <div className="flex items-center space-x-3">
             {isAuthenticated && currentUser ? (
-              <>
-                <div className="text-white text-sm">
-                  <div className="font-medium capitalize">{userRole}</div>
-                  <div className="text-gray-300 text-xs">
-                    {currentUser.slice(0, 6)}...{currentUser.slice(-4)}
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="text-white px-3 py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm font-medium transition-colors"
-                >
-                  Logout
-                </button>
-              </>
+              <ProfileDropdown />
             ) : (
               <div className="flex space-x-2">
                 <button
                   onClick={() => router.push('/auth/login')}
-                  className="text-white px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors"
+                  className="btn btn-secondary text-sm px-4 py-2"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => router.push('/auth/register')}
-                  className="text-indigo-600 px-4 py-2 bg-white hover:bg-gray-100 rounded-md text-sm font-medium transition-colors"
+                  className="btn btn-outline border-white text-white hover:bg-white hover:text-primary text-sm px-4 py-2"
                 >
                   Register
                 </button>
@@ -136,17 +102,31 @@ const NavBar = () => {
         </div>
       </div>
 
-      <Disclosure.Panel className="sm:hidden">
+      <Disclosure.Panel className="sm:hidden bg-primary border-t border-white border-opacity-20">
         <div className="space-y-1 px-2 pb-3 pt-2">
-          {navigation.map((item) => (
+          <button
+            onClick={() => router.push('/')}
+            className={classNames(
+              "block w-full text-left rounded-lg px-4 py-3 text-base font-medium",
+              "text-gray-200 hover:bg-white hover:bg-opacity-10 hover:text-white transition-all duration-200",
+              router.pathname === '/' && "bg-white bg-opacity-20 text-white"
+            )}
+          >
+            Home
+          </button>
+
+          {isAuthenticated && (
             <button
-              key={item.name}
-              onClick={() => router.push(item.href)}
-              className="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+              onClick={() => router.push(getDashboardPath())}
+              className={classNames(
+                "block w-full text-left rounded-lg px-4 py-3 text-base font-medium",
+                "text-gray-200 hover:bg-white hover:bg-opacity-10 hover:text-white transition-all duration-200",
+                router.pathname.includes('/dashboard') && "bg-white bg-opacity-20 text-white"
+              )}
             >
-              {item.name}
+              Dashboard
             </button>
-          ))}
+          )}
         </div>
       </Disclosure.Panel>
     </Disclosure>
