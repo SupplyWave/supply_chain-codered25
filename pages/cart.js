@@ -162,12 +162,12 @@ export default function Cart() {
     <ProtectedRoute requiredRole={USER_ROLES.CUSTOMER}>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="card shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">Shopping Cart</h1>
-                <p className="text-gray-600">{cart.length} items in your cart</p>
+                <h1 className="text-3xl font-bold text-primary">Shopping Cart</h1>
+                <p className="text-medium">{cart.length} items in your cart</p>
               </div>
               <div className="flex items-center space-x-4">
                 <Link href="/shop">
@@ -191,10 +191,10 @@ export default function Cart() {
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
                 {cart.map((item) => (
-                  <div key={item.productId} className="bg-white rounded-xl shadow-lg p-6">
+                  <div key={item.productId} className="card p-6">
                     <div className="flex items-center space-x-4">
                       <img
-                        src={item.image || '/placeholder-product.jpg'}
+                        src={item.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgMTAwQzExNy4zOTQgMTAwIDEzMSA4Ni4zOTQyIDEzMSA2OUMxMzEgNTEuNjA1OCAxMTcuMzk0IDM4IDEwMCAzOEM4Mi42MDU4IDM4IDY5IDUxLjYwNTggNjkgNjlDNjkgODYuMzk0MiA4Mi42MDU4IDEwMCAxMDAgMTAwWk0xMDAgMTAwVjE2MiIgc3Ryb2tlPSIjOUM5QzlDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K'}
                         alt={item.name}
                         className="w-20 h-20 object-cover rounded-lg"
                       />

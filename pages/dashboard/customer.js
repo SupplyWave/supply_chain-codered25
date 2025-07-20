@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useTracking } from "../../Context/Tracking";
 import ProtectedRoute from "../../Components/ProtectedRoute";
 import MetaMaskStatus from "../../Components/MetaMaskStatus";
+import { showNotification } from "../../Components/NotificationSystem";
 import Web3 from "web3";
 import { serializeTransactionReceipt, handleWeb3Error } from "../../utils/blockchain";
+import { ProductsIcon, OrdersIcon, PaymentsIcon, SupplierIcon } from "../../Components/SVG";
 
 export default function CustomerDashboard() {
   const [products, setProducts] = useState([]);
@@ -54,9 +56,10 @@ export default function CustomerDashboard() {
       if (data.success) {
         setProducts(data.data);
       } else {
-        console.error("Failed to fetch products.");
+        showNotification("Failed to load products.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading products. Please refresh the page.", "error", 5000);
       console.error("Error fetching products:", error);
     }
   };
@@ -68,9 +71,10 @@ export default function CustomerDashboard() {
       if (data.success) {
         setPurchases(data.data);
       } else {
-        console.error("Failed to fetch purchases.");
+        showNotification("Failed to load purchase history.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading purchases. Please try again.", "error", 5000);
       console.error("Error fetching purchases:", error);
     }
   };
@@ -78,7 +82,7 @@ export default function CustomerDashboard() {
   // Handle the Buy Click with MetaMask transaction
   const handleBuyClick = async (product) => {
     if (!hasPermission('canBuyProducts')) {
-      alert("You don't have permission to buy products");
+      showNotification("You don't have permission to buy products", "warning", 5000);
       return;
     }
 
@@ -87,7 +91,7 @@ export default function CustomerDashboard() {
       await verifyWalletConnection();
 
       if (!window.ethereum) {
-        alert("MetaMask not detected. Please install MetaMask.");
+        showNotification("MetaMask not detected. Please install MetaMask.", "error", 6000);
         return;
       }
 
@@ -98,12 +102,12 @@ export default function CustomerDashboard() {
 
       // Verify the connected wallet matches the registered wallet
       if (userAddress.toLowerCase() !== currentUser.toLowerCase()) {
-        alert("Please connect the MetaMask wallet that matches your registered address: " + currentUser);
+        showNotification(`Please connect the MetaMask wallet that matches your registered address: ${currentUser}`, "warning", 8000);
         return;
       }
   
       if (!userAddress) {
-        alert("Unable to fetch wallet address. Please try again.");
+        showNotification("Unable to fetch wallet address. Please try again.", "error", 5000);
         return;
       }
   
@@ -185,15 +189,15 @@ export default function CustomerDashboard() {
 
       const purchaseResult = await purchaseResponse.json();
       if (purchaseResult.success) {
-        alert(`Purchase successful! Your tracking ID is: ${purchaseResult.data.purchaseId}`);
+        showNotification(`Purchase successful! Tracking ID: ${purchaseResult.data.purchaseId}`, "success", 8000);
         fetchProducts(); // Refresh the product list
         fetchPurchases(); // Refresh the purchases list
       } else {
-        alert("Transaction successful, but failed to create purchase record: " + purchaseResult.message);
+        showNotification(`Transaction successful, but failed to create purchase record: ${purchaseResult.message}`, "warning", 6000);
       }
     } catch (error) {
       console.error("Transaction error:", error);
-      alert(handleWeb3Error(error));
+      showNotification(handleWeb3Error(error), "error", 6000);
     } finally {
       setIsProcessing(false);
       setSelectedProduct(null);
@@ -231,9 +235,7 @@ export default function CustomerDashboard() {
             <div className="card shadow-medium">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
+                  <ProductsIcon className="w-8 h-8 text-blue-500" style={{ color: '#3b82f6', stroke: '#3b82f6' }} />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-medium">Available Products</p>
@@ -245,9 +247,7 @@ export default function CustomerDashboard() {
             <div className="card shadow-medium">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-accent bg-opacity-10 text-accent">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+                  <SupplierIcon className="w-8 h-8 text-green-500" style={{ color: '#22c55e', stroke: '#22c55e' }} />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-medium">Active Producers</p>
@@ -261,9 +261,7 @@ export default function CustomerDashboard() {
             <div className="card shadow-medium">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-primary bg-opacity-10 text-primary">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
+                  <OrdersIcon className="w-8 h-8 text-purple-500" style={{ color: '#a855f7', stroke: '#a855f7' }} />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-medium">My Orders</p>
@@ -303,9 +301,9 @@ export default function CustomerDashboard() {
 
           {/* Products Section */}
           {activeTab === 'products' && (
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Available Products</h2>
+                <h2 className="text-2xl font-bold text-primary">Available Products</h2>
                 <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                   {products.length} Products
                 </div>
@@ -316,10 +314,10 @@ export default function CustomerDashboard() {
                 products.map((product) => (
                   <div
                     key={product._id}
-                    className="border border-gray-200 p-6 rounded-xl hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-gray-50"
+                    className="card p-6 hover:shadow-lg transition-shadow"
                   >
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="font-bold text-xl text-gray-800">
+                      <h3 className="font-bold text-xl text-primary">
                         {product.name}
                       </h3>
                       <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
@@ -327,15 +325,15 @@ export default function CustomerDashboard() {
                       </span>
                     </div>
 
-                    <p className="text-gray-600 mb-4 line-clamp-3">
+                    <p className="text-medium mb-4 line-clamp-3">
                       {product.description}
                     </p>
 
                     <div className="space-y-2 mb-6">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-light">
                         <strong>Location:</strong> {product.location}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-light">
                         <strong>Producer:</strong> {product.addedBy?.slice(0, 6)}...{product.addedBy?.slice(-4)}
                       </p>
                     </div>
@@ -358,9 +356,9 @@ export default function CustomerDashboard() {
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <div className="text-gray-400 text-6xl mb-4">🛒</div>
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">No Products Available</h3>
-                  <p className="text-gray-500">
+                  <div className="text-light text-6xl mb-4">🛒</div>
+                  <h3 className="text-xl font-semibold text-medium mb-2">No Products Available</h3>
+                  <p className="text-light">
                     Check back later for new products from producers.
                   </p>
                 </div>
@@ -371,9 +369,9 @@ export default function CustomerDashboard() {
 
           {/* Orders & Tracking Section */}
           {activeTab === 'orders' && (
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">My Orders & GPS Tracking</h2>
+                <h2 className="text-2xl font-bold text-primary">My Orders & GPS Tracking</h2>
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={fetchPurchases}

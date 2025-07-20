@@ -124,25 +124,35 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Link href="/" className="text-lg font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
-            ← Back to Home
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2 mt-4">
-            Create Account
-          </h1>
-          <p className="text-gray-600">
-            Join our blockchain supply chain platform
-          </p>
-        </div>
+    <div className="min-h-screen transition-colors duration-300" style={{
+      background: 'linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)'
+    }}>
+      <div className="flex items-center justify-center p-4 min-h-screen">
+        <div className="rounded-2xl shadow-2xl w-full max-w-2xl p-8 transition-colors duration-300" style={{
+          backgroundColor: 'var(--bg-card)',
+          color: 'var(--text-primary)'
+        }}>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <Link href="/" className="text-lg font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
+              ← Back to Home
+            </Link>
+            <h1 className="text-3xl font-bold mb-2 mt-4" style={{ color: 'var(--text-primary)' }}>
+              Create Account
+            </h1>
+            <p style={{ color: 'var(--text-secondary)' }}>
+              Join our blockchain supply chain platform
+            </p>
+          </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="mb-6 p-4 border rounded-lg" style={{
+            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+            borderColor: 'rgba(231, 76, 60, 0.3)',
+            color: 'var(--error)'
+          }}>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
@@ -261,8 +271,11 @@ export default function Register() {
                 className="form-input"
               />
               {passwordError && (
-                <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
-                  <p className="text-orange-600 text-sm flex items-center">
+                <div className="mt-2 p-3 rounded-md border" style={{
+                  backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                  borderColor: 'rgba(243, 156, 18, 0.3)'
+                }}>
+                  <p className="text-sm flex items-center" style={{ color: 'var(--warning)' }}>
                     <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
@@ -335,13 +348,14 @@ export default function Register() {
         </form>
 
         {/* Login Link */}
-        <div className="mt-8 text-center text-sm text-gray-600">
+        <div className="mt-8 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
           <p>
             Already have an account?{" "}
             <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
               Sign in here
             </Link>
           </p>
+        </div>
         </div>
       </div>
     </div>

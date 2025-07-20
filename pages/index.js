@@ -11,17 +11,19 @@ export default function Home() {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center transition-colors duration-300" style={{
+        background: 'linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)'
+      }}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Hero Section */}
       <section className="relative gradient-primary text-white">
         <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -56,13 +58,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-light">
+      <section id="features" className="py-20" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
               Why Choose Our Platform?
             </h2>
-            <p className="text-xl text-medium max-w-3xl mx-auto">
+            <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
               Experience the future of supply chain management with our cutting-edge blockchain solution
             </p>
           </div>
@@ -74,8 +76,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-primary mb-4">Blockchain Security</h3>
-              <p className="text-medium">
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Blockchain Security</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>
                 Immutable records and smart contracts ensure complete transparency and security in every transaction.
               </p>
             </div>
@@ -86,8 +88,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-primary mb-4">Role-Based Access</h3>
-              <p className="text-medium">
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Role-Based Access</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>
                 Suppliers, producers, and customers have tailored experiences with appropriate access controls.
               </p>
             </div>
@@ -99,8 +101,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-primary mb-4">Real-time Tracking</h3>
-              <p className="text-medium">
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Real-time Tracking</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>
                 Track products and materials in real-time from source to destination with complete visibility.
               </p>
             </div>
@@ -109,38 +111,38 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-white">
+      <section id="about" className="py-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
                 About Our Platform
               </h2>
-              <p className="text-lg text-medium mb-6">
+              <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
                 We are revolutionizing supply chain management through blockchain technology. Our platform
                 connects suppliers, producers, and customers in a transparent, secure, and efficient ecosystem.
               </p>
-              <p className="text-lg text-medium mb-8">
+              <p className="text-lg mb-8" style={{ color: 'var(--text-secondary)' }}>
                 With smart contracts and decentralized architecture, we eliminate intermediaries, reduce costs,
                 and ensure complete traceability of products from origin to consumer.
               </p>
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">1000+</div>
-                  <div className="text-medium">Active Users</div>
+                  <div className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>1000+</div>
+                  <div style={{ color: 'var(--text-secondary)' }}>Active Users</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-accent mb-2">50K+</div>
-                  <div className="text-medium">Transactions</div>
+                  <div style={{ color: 'var(--text-secondary)' }}>Transactions</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-secondary mb-2">99.9%</div>
-                  <div className="text-medium">Uptime</div>
+                  <div style={{ color: 'var(--text-secondary)' }}>Uptime</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-                  <div className="text-medium">Support</div>
+                  <div className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>24/7</div>
+                  <div style={{ color: 'var(--text-secondary)' }}>Support</div>
                 </div>
               </div>
             </div>
@@ -190,7 +192,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-2">Email Us</h3>
-              <p className="text-blue-200">contact@supplychain.com</p>
+              <p className="text-blue-200">supplychin@gmail.com</p>
             </div>
 
             <div className="text-center">
@@ -200,7 +202,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-2">Call Us</h3>
-              <p className="text-blue-200">+1 (555) 123-4567</p>
+              <p className="text-blue-200">+91 94499 35583</p>
             </div>
 
             <div className="text-center">
@@ -211,7 +213,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-2">Visit Us</h3>
-              <p className="text-blue-200">123 Blockchain St, Tech City</p>
+              <p className="text-blue-200">Siddaganga Institute of Technology, Bengaluru</p>
             </div>
           </div>
 

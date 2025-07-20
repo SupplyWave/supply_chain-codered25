@@ -3,6 +3,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useTracking } from "../Context/Tracking";
 import { useRouter } from "next/router";
 import ProfileDropdown from "./ProfileDropdown";
+import ThemeToggle from "./ThemeToggle";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -41,7 +42,7 @@ const NavBar = () => {
           </div>
 
           {/* Company Name and Navigation */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-8 sm:ml-0 ml-12">
             {/* Company Name */}
             <div className="flex-shrink-0">
               <div className="flex items-center">
@@ -80,6 +81,7 @@ const NavBar = () => {
 
           {/* User Account Section - Right Side */}
           <div className="flex items-center space-x-3">
+            <ThemeToggle />
             {isAuthenticated && currentUser ? (
               <ProfileDropdown />
             ) : (

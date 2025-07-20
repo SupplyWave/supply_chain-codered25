@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useTracking } from "../../Context/Tracking";
 import ProtectedRoute from "../../Components/ProtectedRoute";
 import GPSTrackingUpdate from "../../Components/GPSTrackingUpdate";
+import { showNotification } from "../../Components/NotificationSystem";
+import { RawMaterialsIcon, OrdersIcon, PaymentsIcon } from "../../Components/SVG";
 
 const SupplierDashboard = () => {
   const [activeTab, setActiveTab] = useState('materials'); // 'materials', 'orders', 'tracking'
@@ -77,6 +79,7 @@ const SupplierDashboard = () => {
         setRawMaterialOrders(orders);
       }
     } catch (error) {
+      showNotification("Error loading raw material orders. Please try again.", "error", 5000);
       console.error("Error fetching raw material orders:", error);
     }
   };
@@ -104,9 +107,10 @@ const SupplierDashboard = () => {
         );
         setRawMaterials(userMaterials);
       } else {
-        console.error("Failed to fetch raw materials.");
+        showNotification("Failed to load raw materials.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading raw materials. Please try again.", "error", 5000);
       console.error("Error fetching raw materials:", error);
     }
   };
@@ -125,6 +129,7 @@ const SupplierDashboard = () => {
         setApprovedPayments(payments);
       }
     } catch (error) {
+      showNotification("Error loading approved payments. Please try again.", "error", 5000);
       console.error("Error fetching approved payments:", error);
     }
   };
@@ -166,11 +171,11 @@ const SupplierDashboard = () => {
         setShowForm(false);
         fetchRawMaterials();
       } else {
-        alert("Failed to add raw material: " + result.message);
+        showNotification("Failed to add raw material: " + result.message, "error", 6000);
       }
     } catch (error) {
+      showNotification("Error adding raw material. Please try again.", "error", 5000);
       console.error("Error adding raw material:", error);
-      alert("Error adding raw material. Please try again.");
     }
   };
 
@@ -191,17 +196,17 @@ const SupplierDashboard = () => {
       const result = await response.json();
       if (result.success) {
         if (newStock === 0) {
-          alert("Material stock updated to 0. Material will be automatically removed.");
+          showNotification("Material stock updated to 0. Material will be automatically removed.", "info", 6000);
         } else {
-          alert("Material availability updated successfully!");
+          showNotification("Material availability updated successfully!", "success", 5000);
         }
         fetchRawMaterials();
       } else {
-        alert("Failed to update material: " + result.message);
+        showNotification("Failed to update material: " + result.message, "error", 6000);
       }
     } catch (error) {
+      showNotification("Error updating material. Please try again.", "error", 5000);
       console.error("Error updating material:", error);
-      alert("Error updating material. Please try again.");
     }
   };
 
@@ -232,9 +237,7 @@ const SupplierDashboard = () => {
             <div className="card shadow-medium">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-accent bg-opacity-10 text-accent">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
+                  <RawMaterialsIcon className="w-8 h-8 text-blue-600" style={{ color: '#2563eb' }} />
                 </div>
                 <div className="ml-4">
                   <h2 className="text-lg font-semibold text-primary">Raw Materials</h2>
@@ -246,9 +249,7 @@ const SupplierDashboard = () => {
             <div className="card shadow-medium">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+                  <OrdersIcon className="w-8 h-8 text-green-600" style={{ color: '#16a34a' }} />
                 </div>
                 <div className="ml-4">
                   <h2 className="text-lg font-semibold text-primary">Orders</h2>
@@ -257,15 +258,13 @@ const SupplierDashboard = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg>
+                  <PaymentsIcon className="w-8 h-8 text-purple-600" style={{ color: '#9333ea' }} />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-lg font-semibold text-gray-800">Payments</h2>
+                  <h2 className="text-lg font-semibold text-primary">Payments</h2>
                   <p className="text-3xl font-bold text-purple-600">{approvedPayments.length}</p>
                 </div>
               </div>
@@ -273,15 +272,15 @@ const SupplierDashboard = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-white rounded-xl shadow-lg mb-8">
-            <div className="border-b border-gray-200">
+          <div className="card shadow-medium mb-8">
+            <div className="border-b" style={{ borderColor: 'var(--border-light)' }}>
               <nav className="-mb-px flex space-x-8 px-6">
                 <button
                   onClick={() => setActiveTab('materials')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'materials'
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                   }`}
                 >
                   Raw Materials
@@ -291,7 +290,7 @@ const SupplierDashboard = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'orders'
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                   }`}
                 >
                   Material Orders
@@ -301,7 +300,7 @@ const SupplierDashboard = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'tracking'
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-medium hover:text-primary hover:border-gray-300'
                   }`}
                 >
                   Shipment Tracking
@@ -315,7 +314,7 @@ const SupplierDashboard = () => {
               {activeTab === 'materials' && (
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">My Raw Materials</h2>
+                    <h2 className="text-2xl font-bold text-primary">My Raw Materials</h2>
                     <button
                       onClick={() => setShowForm(!showForm)}
                       className="btn btn-primary shadow-medium flex items-center"
@@ -330,11 +329,11 @@ const SupplierDashboard = () => {
                       rawMaterials.map((material) => (
                         <div
                           key={material._id}
-                          className="border border-gray-200 p-6 rounded-lg hover:shadow-md transition-shadow bg-white"
+                          className="card p-6 hover:shadow-md transition-shadow"
                         >
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex-1">
-                              <h3 className="font-semibold text-xl text-gray-800 mb-2">
+                              <h3 className="font-semibold text-xl text-primary mb-2">
                                 {material.name}
                               </h3>
                               <div className="flex items-center space-x-3 mb-2">
@@ -354,7 +353,7 @@ const SupplierDashboard = () => {
                               <div className="text-2xl font-bold text-green-600 mb-1">
                                 {material.price} {material.currency || 'ETH'}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-light">
                                 Stock: {material.quantity || material.availableStock || 0} {material.unit || 'units'}
                               </div>
                             </div>
@@ -363,32 +362,37 @@ const SupplierDashboard = () => {
                           {/* Product Details */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                              <p className="text-gray-600 mb-2">
+                              <p className="text-medium mb-2">
                                 <strong>Description:</strong> {material.description || 'No description provided'}
                               </p>
-                              <p className="text-gray-600 mb-2">
+                              <p className="text-medium mb-2">
                                 <strong>Location:</strong> {material.location}
                               </p>
-                              <p className="text-gray-600 mb-2">
+                              <p className="text-medium mb-2">
                                 <strong>Material Type:</strong> {material.materialType || 'Not specified'}
                               </p>
                             </div>
                             <div>
-                              <p className="text-gray-600 mb-2">
+                              <p className="text-medium mb-2">
                                 <strong>Technical Specs:</strong> {material.technicalSpecs || 'Not provided'}
                               </p>
                             </div>
                           </div>
 
                           {/* Availability Management */}
-                          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                          <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: 'var(--border-light)' }}>
                             <div className="flex items-center space-x-4">
-                              <label className="text-sm font-medium text-gray-700">Update Stock:</label>
+                              <label className="text-sm font-medium text-primary">Update Stock:</label>
                               <input
                                 type="number"
                                 min="0"
                                 defaultValue={material.quantity || material.availableStock || 0}
-                                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                                className="w-20 px-2 py-1 border rounded text-sm"
+                                style={{ 
+                                  borderColor: 'var(--border-medium)',
+                                  backgroundColor: 'var(--bg-card)',
+                                  color: 'var(--text-primary)'
+                                }}
                                 onBlur={(e) => {
                                   const newStock = parseInt(e.target.value) || 0;
                                   if (newStock !== (material.quantity || material.availableStock || 0)) {
@@ -396,9 +400,9 @@ const SupplierDashboard = () => {
                                   }
                                 }}
                               />
-                              <span className="text-sm text-gray-500">{material.unit || 'units'}</span>
+                              <span className="text-sm text-light">{material.unit || 'units'}</span>
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-light">
                               Total Sold: {material.totalSold || 0} {material.currency || 'ETH'}
                             </div>
                           </div>
@@ -406,11 +410,11 @@ const SupplierDashboard = () => {
                       ))
                     ) : (
                       <div className="text-center py-8">
-                        <div className="text-gray-400 text-4xl mb-4">📦</div>
-                        <p className="text-gray-500">No raw materials added yet</p>
+                        <div className="text-light text-4xl mb-4">📦</div>
+                        <p className="text-light">No raw materials added yet</p>
                         <button
                           onClick={() => setShowForm(true)}
-                          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                          className="btn btn-primary mt-4"
                         >
                           Add Your First Material
                         </button>

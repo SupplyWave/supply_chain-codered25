@@ -55,14 +55,10 @@ export default function Login() {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen transition-colors duration-300" style={{
-        background: 'linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)'
-      }}>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>Loading...</p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -107,70 +103,70 @@ export default function Login() {
               <label className="form-label">
                 Username or Email
               </label>
-              <input
-                type="text"
-                name="identifier"
-                value={formData.identifier}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter your username or email"
-                className="form-input"
-              />
-            </div>
-
-            <div>
-              <label className="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter your password"
-                className="form-input"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn btn-primary w-full py-3"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing in...
-                </div>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-
-          {/* Register Link */}
-          <div className="mt-8 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
-            <p>
-              Don't have an account?{" "}
-              <Link href="/auth/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
-                Create one here
-              </Link>
-            </p>
+            <input
+              type="text"
+              name="identifier"
+              value={formData.identifier}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter username or email"
+              className="form-input"
+            />
+          </div>
+          
+          <div>
+            <label className="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter password"
+              className="form-input"
+            />
           </div>
 
-          {/* Info Section */}
-          <div className="mt-8 p-4 rounded-lg" style={{
-            backgroundColor: 'var(--bg-secondary)',
-            borderColor: 'var(--border-light)'
-          }}>
-            <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Secure Login</h4>
-            <ul className="text-sm space-y-1" style={{ color: 'var(--text-secondary)' }}>
-              <li>• Your credentials are encrypted and secure</li>
-              <li>• Access your role-specific dashboard</li>
-              <li>• Manage your blockchain transactions</li>
-            </ul>
-          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="btn btn-primary w-full py-3"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Signing in...
+              </div>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </form>
+
+        {/* Register Link */}
+        <div className="mt-8 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p>
+            Don't have an account?{" "}
+            <Link href="/auth/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
+              Create one here
+            </Link>
+          </p>
+        </div>
+
+        {/* Info Section */}
+        <div className="mt-8 p-4 rounded-lg" style={{
+          backgroundColor: 'var(--bg-secondary)',
+          borderColor: 'var(--border-light)'
+        }}>
+          <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Secure Login</h4>
+          <ul className="text-sm space-y-1" style={{ color: 'var(--text-secondary)' }}>
+            <li>• Your credentials are encrypted and secure</li>
+            <li>• Access your role-specific dashboard</li>
+            <li>• Manage your blockchain transactions</li>
+          </ul>
+        </div>
         </div>
       </div>
     </div>

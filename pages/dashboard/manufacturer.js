@@ -220,6 +220,7 @@
 //   );
 // }
 import { useEffect, useState } from "react";
+import { showNotification } from "../../Components/NotificationSystem";
 import Web3 from "web3";
 
 export default function ProducerDashboard() {
@@ -253,6 +254,7 @@ export default function ProducerDashboard() {
       const accounts = await web3.eth.getAccounts();
       setWalletAddress(accounts[0]);
     } catch (error) {
+      showNotification("Error connecting to MetaMask. Please try again.", "error", 5000);
       console.error("Error connecting to MetaMask:", error);
     }
   };
@@ -264,9 +266,10 @@ export default function ProducerDashboard() {
       if (data.success) {
         setRawMaterials(data.data);
       } else {
-        console.error("Failed to fetch raw materials.");
+        showNotification("Failed to load raw materials.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading raw materials. Please try again.", "error", 5000);
       console.error("Error fetching raw materials:", error);
     }
   };
@@ -375,7 +378,7 @@ export default function ProducerDashboard() {
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Raw Materials Section */}
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="card shadow rounded-lg p-6">
         <h2 className="text-xl font-bold mb-4">Raw Materials</h2>
         <div className="space-y-4">
           {rawMaterials.length > 0 ? (
@@ -415,7 +418,7 @@ export default function ProducerDashboard() {
       </div>
 
       {/* Products Section */}
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="card shadow rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Products</h2>
           <button
@@ -456,7 +459,7 @@ export default function ProducerDashboard() {
       {/* Add Product Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <div className="card p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Add New Product</h2>
             <input
               type="text"

@@ -136,7 +136,20 @@ export const TrackingProvider = ({ children }) => {
   // Connect to MetaMask and verify it matches authenticated user
   const connectMetaMask = async () => {
     try {
-      if (!window.ethereum) throw new Error("Please install MetaMask.");
+      if (!window.ethereum) {
+        // Show notification instead of throwing error
+        if (typeof window !== 'undefined') {
+          const event = new CustomEvent('showNotification', {
+            detail: { 
+              message: 'Please install MetaMask extension to connect your wallet.', 
+              type: 'error',
+              duration: 6000
+            }
+          });
+          window.dispatchEvent(event);
+        }
+        return null;
+      }
 
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -147,16 +160,52 @@ export const TrackingProvider = ({ children }) => {
       // If user is authenticated, verify the connected wallet matches
       if (isAuthenticated && currentUser) {
         if (connectedAddress.toLowerCase() !== currentUser.toLowerCase()) {
-          throw new Error(
-            `Please connect the MetaMask wallet that matches your registered address: ${currentUser}`
-          );
+          // Show notification instead of throwing error
+          if (typeof window !== 'undefined') {
+            const event = new CustomEvent('showNotification', {
+              detail: { 
+                message: `Please connect the MetaMask wallet that matches your registered address: ${currentUser}`, 
+                type: 'warning',
+                duration: 8000
+              }
+            });
+            window.dispatchEvent(event);
+          }
+          return null;
         }
+      }
+
+      // Show success notification
+      if (typeof window !== 'undefined') {
+        const event = new CustomEvent('showNotification', {
+          detail: { 
+            message: 'MetaMask wallet connected successfully!', 
+            type: 'success',
+            duration: 3000
+          }
+        });
+        window.dispatchEvent(event);
       }
 
       return connectedAddress;
     } catch (error) {
       console.error("Error connecting to MetaMask:", error.message || error);
-      throw error;
+      
+      // Show notification instead of throwing error
+      if (typeof window !== 'undefined') {
+        const event = new CustomEvent('showNotification', {
+          detail: { 
+            message: error.message === 'User rejected the request.' 
+              ? 'MetaMask connection was cancelled.' 
+              : 'Failed to connect to MetaMask. Please try again.', 
+            type: 'error',
+            duration: 5000
+          }
+        });
+        window.dispatchEvent(event);
+      }
+      
+      return null;
     }
   };
 

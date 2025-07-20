@@ -54,11 +54,13 @@ export default function MetaMaskStatus() {
   const handleConnect = async () => {
     try {
       setIsConnecting(true);
-      await connectMetaMask();
-      await checkMetaMaskStatus();
+      const result = await connectMetaMask();
+      if (result) {
+        await checkMetaMaskStatus();
+      }
     } catch (error) {
       console.error('Error connecting MetaMask:', error);
-      alert(error.message || 'Failed to connect MetaMask');
+      // Error notifications are now handled in the connectMetaMask function
     } finally {
       setIsConnecting(false);
     }
@@ -77,7 +79,18 @@ export default function MetaMaskStatus() {
       await checkMetaMaskStatus();
     } catch (error) {
       console.error('Error switching account:', error);
-      alert('Please manually switch to the correct account in MetaMask');
+      
+      // Show notification instead of alert
+      if (typeof window !== 'undefined') {
+        const event = new CustomEvent('showNotification', {
+          detail: { 
+            message: 'Please manually switch to the correct account in MetaMask', 
+            type: 'info',
+            duration: 5000
+          }
+        });
+        window.dispatchEvent(event);
+      }
     } finally {
       setIsConnecting(false);
     }

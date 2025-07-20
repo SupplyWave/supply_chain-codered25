@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useTracking } from "../../Context/Tracking";
 import MetaMaskStatus from "../../Components/MetaMaskStatus";
 import GPSTrackingUpdate from "../../Components/GPSTrackingUpdate";
+import { showNotification } from "../../Components/NotificationSystem";
 import Web3 from "web3";
 import { serializeTransactionReceipt, handleWeb3Error } from "../../utils/blockchain";
+import { 
+  RawMaterialsIcon, 
+  ProductsIcon, 
+  OrdersIcon, 
+  TrackingIcon 
+} from "../../Components/SVG";
 
 export default function ProducerDashboard() {
   const [rawMaterials, setRawMaterials] = useState([]);
@@ -61,9 +68,10 @@ export default function ProducerDashboard() {
       if (data.success) {
         setRawMaterials(data.data);
       } else {
-        console.error("Failed to fetch raw materials.");
+        showNotification("Failed to load raw materials.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading raw materials. Please try again.", "error", 5000);
       console.error("Error fetching raw materials:", error);
     }
   };
@@ -79,9 +87,10 @@ export default function ProducerDashboard() {
         );
         setProducts(userProducts);
       } else {
-        console.error("Failed to fetch products.");
+        showNotification("Failed to load products.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading products. Please refresh the page.", "error", 5000);
       console.error("Error fetching products:", error);
     }
   };
@@ -93,9 +102,10 @@ export default function ProducerDashboard() {
       if (data.success) {
         setOrders(data.data);
       } else {
-        console.error("Failed to fetch orders.");
+        showNotification("Failed to load orders.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading orders. Please try again.", "error", 5000);
       console.error("Error fetching orders:", error);
     }
   };
@@ -148,9 +158,10 @@ export default function ProducerDashboard() {
 
         setRawMaterialPurchases(rawMaterialOrders);
       } else {
-        console.error("Failed to fetch raw material purchases.");
+        showNotification("Failed to load raw material purchases.", "warning", 5000);
       }
     } catch (error) {
+      showNotification("Error loading raw material purchases. Please try again.", "error", 5000);
       console.error("Error fetching raw material purchases:", error);
     }
   };
@@ -174,16 +185,16 @@ export default function ProducerDashboard() {
       });
       const data = await response.json();
       if (data.success) {
-        alert("Product added successfully!");
+        showNotification("Product added successfully!", "success", 5000);
         fetchProducts();
         setShowModal(false);
         setNewProduct({ name: "", description: "", price: "", location: "" });
       } else {
-        alert("Failed to add product.");
+        showNotification("Failed to add product.", "error", 5000);
       }
     } catch (error) {
+      showNotification("Error adding product. Please try again.", "error", 5000);
       console.error("Error adding product:", error);
-      alert("Error adding product.");
     }
   };
 
@@ -304,9 +315,7 @@ export default function ProducerDashboard() {
           <div className="card shadow-medium">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
+                <RawMaterialsIcon className="w-8 h-8 text-blue-500" style={{ color: '#3b82f6', stroke: '#3b82f6' }} />
               </div>
               <div className="ml-4">
                 <h2 className="text-lg font-semibold text-primary">Raw Materials</h2>
@@ -318,9 +327,7 @@ export default function ProducerDashboard() {
           <div className="card shadow-medium">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-accent bg-opacity-10 text-accent">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
+                <ProductsIcon className="w-8 h-8 text-green-500" style={{ color: '#22c55e', stroke: '#22c55e' }} />
               </div>
               <div className="ml-4">
                 <h2 className="text-lg font-semibold text-primary">My Products</h2>
@@ -332,9 +339,7 @@ export default function ProducerDashboard() {
           <div className="card shadow-medium">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-primary bg-opacity-10 text-primary">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <OrdersIcon className="w-8 h-8 text-purple-500" style={{ color: '#a855f7', stroke: '#a855f7' }} />
               </div>
               <div className="ml-4">
                 <h2 className="text-lg font-semibold text-primary">Orders</h2>
@@ -346,10 +351,7 @@ export default function ProducerDashboard() {
           <div className="card shadow-medium">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+                <TrackingIcon className="w-8 h-8 text-red-500" style={{ color: '#ef4444', stroke: '#ef4444' }} />
               </div>
               <div className="ml-4">
                 <h2 className="text-lg font-semibold text-primary">Tracking</h2>
@@ -414,9 +416,9 @@ export default function ProducerDashboard() {
 
           {/* Raw Materials Tab */}
           {activeTab === 'materials' && (
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Available Raw Materials</h2>
+                <h2 className="text-2xl font-bold text-primary">Available Raw Materials</h2>
                 <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                 {rawMaterials.length} Available
               </div>
@@ -430,17 +432,17 @@ export default function ProducerDashboard() {
                     className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow"
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-semibold text-lg text-gray-800">
+                      <h3 className="font-semibold text-lg text-primary">
                         {material.name}
                       </h3>
                       <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium">
                         {material.price} ETH
                       </span>
                     </div>
-                    <p className="text-gray-600 mb-2">
+                    <p className="text-medium mb-2">
                       <strong>Location:</strong> {material.location}
                     </p>
-                    <p className="text-gray-500 text-sm mb-3">
+                    <p className="text-light text-sm mb-3">
                       <strong>Supplier:</strong> {material.addedBy?.slice(0, 6)}...{material.addedBy?.slice(-4)}
                     </p>
 
@@ -462,8 +464,8 @@ export default function ProducerDashboard() {
                 ))
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-400 text-4xl mb-4">📦</div>
-                  <p className="text-gray-500">No raw materials available</p>
+                  <div className="text-light text-4xl mb-4">📦</div>
+                  <p className="text-light">No raw materials available</p>
                 </div>
               )}
             </div>
@@ -472,9 +474,9 @@ export default function ProducerDashboard() {
 
           {/* Products Tab */}
           {activeTab === 'products' && (
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="card shadow-medium p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">My Products</h2>
+              <h2 className="text-2xl font-bold text-primary">My Products</h2>
               <button
                 onClick={() => setShowModal(true)}
                 className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center"
@@ -565,9 +567,6 @@ export default function ProducerDashboard() {
                           }`}
                         >
                           {selectedOrderForUpdate === order._id ? '📍 Close GPS Update' : '📍 Update with GPS'}
-                        </button>
-                        <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition-colors">
-                          View Details
                         </button>
                       </div>
 

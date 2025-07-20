@@ -31,7 +31,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-light">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -50,10 +50,10 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Information */}
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              <h2 className="text-3xl font-bold text-primary mb-8">
                 Get In Touch
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className="text-lg text-medium mb-8">
                 Ready to transform your supply chain? We'd love to hear from you. 
                 Send us a message and we'll respond as soon as possible.
               </p>
@@ -64,8 +64,8 @@ export default function Contact() {
                     <span className="text-white text-xl">📧</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">contact@supplychain.com</p>
+                    <h3 className="font-semibold text-primary">Email</h3>
+                    <p className="text-medium">contact@supplychain.com</p>
                   </div>
                 </div>
                 
@@ -74,8 +74,8 @@ export default function Contact() {
                     <span className="text-white text-xl">📞</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <h3 className="font-semibold text-primary">Phone</h3>
+                    <p className="text-medium">+1 (555) 123-4567</p>
                   </div>
                 </div>
                 
@@ -84,8 +84,8 @@ export default function Contact() {
                     <span className="text-white text-xl">📍</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Address</h3>
-                    <p className="text-gray-600">123 Blockchain Street<br />Tech City, TC 12345</p>
+                    <h3 className="font-semibold text-primary">Address</h3>
+                    <p className="text-medium">123 Blockchain Street<br />Tech City, TC 12345</p>
                   </div>
                 </div>
                 
@@ -94,8 +94,8 @@ export default function Contact() {
                     <span className="text-white text-xl">🕒</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Business Hours</h3>
-                    <p className="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM<br />Saturday: 10:00 AM - 4:00 PM</p>
+                    <h3 className="font-semibold text-primary">Business Hours</h3>
+                    <p className="text-medium">Monday - Friday: 9:00 AM - 6:00 PM<br />Saturday: 10:00 AM - 4:00 PM</p>
                   </div>
                 </div>
               </div>
