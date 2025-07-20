@@ -90,7 +90,7 @@ export default function Login() {
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="form-label">
               Username or Email
             </label>
             <input
@@ -100,12 +100,12 @@ export default function Login() {
               onChange={handleInputChange}
               required
               placeholder="Enter username or email"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+              className="form-input"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="form-label">
               Password
             </label>
             <input
@@ -115,14 +115,14 @@ export default function Login() {
               onChange={handleInputChange}
               required
               placeholder="Enter password"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+              className="form-input"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200 font-semibold transform hover:scale-105"
+            className="btn btn-primary w-full py-3"
           >
             {isLoading ? (
               <div className="flex items-center justify-center">

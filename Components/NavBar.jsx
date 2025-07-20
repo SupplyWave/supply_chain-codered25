@@ -92,7 +92,7 @@ const NavBar = () => {
                 </button>
                 <button
                   onClick={() => router.push('/auth/register')}
-                  className="btn btn-outline border-white text-white hover:bg-white hover:text-primary text-sm px-4 py-2"
+                  className="btn bg-transparent border-2 border-accent-green text-accent-green hover:bg-accent-green hover:text-white text-sm px-4 py-2 transition-all duration-200 font-medium"
                 >
                   Register
                 </button>

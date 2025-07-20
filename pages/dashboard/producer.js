@@ -772,7 +772,7 @@ export default function ProducerDashboard() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, name: e.target.value })
                   }
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
               
@@ -786,7 +786,7 @@ export default function ProducerDashboard() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, description: e.target.value })
                   }
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 resize-none"
+                  className="form-input"
                 />
               </div>
               
@@ -802,7 +802,7 @@ export default function ProducerDashboard() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, price: e.target.value })
                   }
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
               
@@ -817,7 +817,7 @@ export default function ProducerDashboard() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, location: e.target.value })
                   }
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
             </div>

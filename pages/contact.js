@@ -142,7 +142,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       placeholder="Your full name"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="form-input"
                     />
                   </div>
                   
@@ -157,7 +157,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       placeholder="your@email.com"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="form-input"
                     />
                   </div>
                   
@@ -170,7 +170,7 @@ export default function Contact() {
                       value={formData.subject}
                       onChange={handleInputChange}
                       required
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="form-input"
                     >
                       <option value="">Select a subject</option>
                       <option value="general">General Inquiry</option>
@@ -192,7 +192,7 @@ export default function Contact() {
                       required
                       rows={5}
                       placeholder="Tell us how we can help you..."
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                      className="form-input"
                     />
                   </div>
                   

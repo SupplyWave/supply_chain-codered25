@@ -99,12 +99,12 @@ export default function TrackingTable() {
                   placeholder="Search by Order ID, Product Name, or Status..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
               <button
                 onClick={fetchPurchases}
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                className="btn btn-primary"
               >
                 Refresh
               </button>

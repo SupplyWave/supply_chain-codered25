@@ -259,7 +259,7 @@ export default function Shop() {
                   placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
 
@@ -268,7 +268,7 @@ export default function Shop() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 >
                   {categories.map(category => (
                     <option key={category} value={category}>{category}</option>
@@ -281,7 +281,7 @@ export default function Shop() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 >
                   <option value="newest">Newest First</option>
                   <option value="price_low">Price: Low to High</option>

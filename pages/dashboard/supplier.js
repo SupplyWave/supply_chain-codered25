@@ -571,7 +571,7 @@ const SupplierDashboard = () => {
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           required
                           placeholder="Enter product/material name"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         />
                       </div>
 
@@ -584,7 +584,7 @@ const SupplierDashboard = () => {
                           value={formData.category}
                           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                           required
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         >
                           <option value="Raw Material">Raw Material</option>
                           <option value="Plastic">Plastic</option>
@@ -608,7 +608,7 @@ const SupplierDashboard = () => {
                           required
                           rows="3"
                           placeholder="Detailed overview, benefits, use-cases"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         />
                       </div>
 
@@ -622,7 +622,7 @@ const SupplierDashboard = () => {
                           onChange={(e) => setFormData({ ...formData, technicalSpecs: e.target.value })}
                           rows="2"
                           placeholder="Weight, dimensions, grade, quality standards"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         />
                       </div>
 
@@ -636,7 +636,7 @@ const SupplierDashboard = () => {
                           value={formData.materialType}
                           onChange={(e) => setFormData({ ...formData, materialType: e.target.value })}
                           placeholder="Plastic type, metal type, etc."
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         />
                       </div>
 
@@ -730,7 +730,7 @@ const SupplierDashboard = () => {
                           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                           required
                           placeholder="Enter complete address"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         />
                       </div>
 
@@ -744,7 +744,7 @@ const SupplierDashboard = () => {
                           value={formData.productImages}
                           onChange={(e) => setFormData({ ...formData, productImages: e.target.value })}
                           placeholder="Comma-separated image URLs"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="form-input"
                         />
                       </div>
                     </div>

@@ -118,7 +118,7 @@ export default function Register() {
         <form onSubmit={handleRegister} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Username *
               </label>
               <input
@@ -128,12 +128,12 @@ export default function Register() {
                 onChange={handleInputChange}
                 required
                 placeholder="Choose a username"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="form-input"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Email *
               </label>
               <input
@@ -143,13 +143,13 @@ export default function Register() {
                 onChange={handleInputChange}
                 required
                 placeholder="your@email.com"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="form-input"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="form-label">
               Full Name *
             </label>
             <input
@@ -159,12 +159,12 @@ export default function Register() {
               onChange={handleInputChange}
               required
               placeholder="Your full name"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+              className="form-input"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="form-label">
               Address *
             </label>
             <input
@@ -174,12 +174,12 @@ export default function Register() {
               onChange={handleInputChange}
               required
               placeholder="Your physical address"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+              className="form-input"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="form-label">
               MetaMask Wallet Address *
             </label>
             <input
@@ -189,7 +189,7 @@ export default function Register() {
               onChange={handleInputChange}
               required
               placeholder="0x..."
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+              className="form-input"
             />
             <p className="text-xs text-gray-500 mt-1">
               This should be your MetaMask wallet address for blockchain transactions
@@ -197,7 +197,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="form-label">
               Role *
             </label>
             <select
@@ -205,7 +205,7 @@ export default function Register() {
               value={formData.role}
               onChange={handleInputChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+              className="form-input"
             >
               <option value="">Select your role</option>
               <option value={USER_ROLES.SUPPLIER}>Supplier - Provide raw materials</option>
@@ -216,7 +216,7 @@ export default function Register() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Password *
               </label>
               <input
@@ -226,12 +226,12 @@ export default function Register() {
                 onChange={handleInputChange}
                 required
                 placeholder="Create a strong password"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="form-input"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Confirm Password *
               </label>
               <input
@@ -241,14 +241,14 @@ export default function Register() {
                 onChange={handleInputChange}
                 required
                 placeholder="Confirm your password"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="form-input"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Company (Optional)
               </label>
               <input
@@ -257,12 +257,12 @@ export default function Register() {
                 value={formData.company}
                 onChange={handleInputChange}
                 placeholder="Company name"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="form-input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Phone (Optional)
               </label>
               <input
@@ -271,7 +271,7 @@ export default function Register() {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="Phone number"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="form-input"
               />
             </div>
           </div>
@@ -279,7 +279,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200 font-semibold transform hover:scale-105"
+            className="btn btn-primary w-full py-3"
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
