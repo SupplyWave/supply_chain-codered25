@@ -5,7 +5,8 @@ A comprehensive, decentralized supply chain management system built with blockch
 ## 🌟 Overview
 
 This platform revolutionizes supply chain management by providing a transparent, secure, and efficient ecosystem that connects suppliers, producers, and customers through blockchain technology. The system ensures traceability, authenticity, and trust throughout the entire supply chain process.
-🔗 **Live App**: [https://supplywave.vercel.app/](https://supplywave.vercel.app/)
+🔗 **Live App**:  
+[https://supplywave.vercel.app/](https://supplywave.vercel.app/)
 
 ## ✨ Key Features
 
