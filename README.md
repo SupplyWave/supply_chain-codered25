@@ -5,6 +5,7 @@ A comprehensive, decentralized supply chain management system built with blockch
 ## 🌟 Overview
 
 This platform revolutionizes supply chain management by providing a transparent, secure, and efficient ecosystem that connects suppliers, producers, and customers through blockchain technology. The system ensures traceability, authenticity, and trust throughout the entire supply chain process.
+🔗 **Live App**: [https://supplywave.vercel.app/](https://supplywave.vercel.app/)
 
 ## ✨ Key Features
 
@@ -237,9 +238,7 @@ Ensure all environment variables are properly configured for production:
 
 ### **Deployment Platforms**
 - **Vercel**: Recommended for Next.js applications
-- **Netlify**: Alternative deployment option
-- **AWS/Azure**: For enterprise deployments
-- **Docker**: Containerized deployment option
+
 
 ## 🤝 Contributing
 
@@ -390,6 +389,6 @@ User Action → Frontend → API Route → Database → Blockchain → Response
 
 ---
 
-**Built with ❤️ using Next.js, MongoDB, and Blockchain Technology**
+**Built with ❤️ by SupplyWave Team**
 
 *Last Updated: January 2025 | Version 2.0.0*
